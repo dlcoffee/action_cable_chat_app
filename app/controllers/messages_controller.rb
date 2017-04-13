@@ -13,7 +13,10 @@ class MessagesController < ApplicationController
         message: render_message(message)
       )
 
-      head :ok
+      message.mentions.each do |mention|
+        ActionCable.server.broadcast "room_channel_user_#{mention.id}",
+                                     mention: true
+      end
     else
       render 'index'
     end
